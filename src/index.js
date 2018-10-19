@@ -1,9 +1,5 @@
-import Test1 from "./components/test1";
+import AppDrawer from "./components/AppDrawer";
+import "../node_modules/bootstrap/dist/css/bootstrap.css";
 
 const app = document.getElementById("app");
-const Component1 = new Test1({
-  target: app,
-  selector: "component1"
-});
-
-Component1.mount();
+window.customElements.define("app-drawer", AppDrawer);
