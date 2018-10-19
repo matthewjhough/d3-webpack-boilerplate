@@ -15,6 +15,24 @@ var g = d3
   .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 
 // Labels ...
+// X Label
+g.append("text")
+  .attr("class", "x axis-label")
+  .attr("x", width / 2)
+  .attr("y", height + 140)
+  .attr("font-size", "20px")
+  .attr("text-anchor", "middle")
+  .text("The word's tallest buildings");
+
+// Y Label
+g.append("text")
+  .attr("class", "y axis-label")
+  .attr("x", -(height / 2))
+  .attr("y", -60)
+  .attr("font-size", "20px")
+  .attr("text-anchor", "middle")
+  .attr("transform", "rotate(-90)")
+  .text("Height (m)");
 
 // Viz start
 d3.json("../data/buildings.json").then(data => {
@@ -46,7 +64,10 @@ d3.json("../data/buildings.json").then(data => {
     .attr("text-anchor", "end")
     .attr("transform", "rotate(-40)");
 
-  var yAxisCall = d3.axisLeft(y);
+  var yAxisCall = d3
+    .axisLeft(y)
+    .ticks(3)
+    .tickFormat(d => d + "m");
   g.append("g")
     .attr("class", "y-axis")
     .call(yAxisCall);
