@@ -1,44 +1,18 @@
 import * as d3 from "d3";
+import { height, width, canvas, xAxisGroup, yAxisGroup } from "./canvas";
+import { x, y } from "./scales";
+import { yLabel, xLabel } from "./labels";
+import "./style.css";
 
-const margin = {
-  left: 100,
-  right: 10,
-  top: 10,
-  bottom: 150
-};
-const height = 400 - margin.top - margin.bottom;
-const width = 600 - margin.left - margin.right;
+// flag to switch between data view
+var flag = true;
 
-// canvas setup :
+// transition variable
+const t = d3.transition().duration(500);
 
-const canvas = d3
-  .select("#chart-area")
-  .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-  .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
-
-// X Label
-canvas
-  .append("text")
-  .attr("class", "x axis-label")
-  .attr("x", width / 2)
-  .attr("y", height + 140)
-  .attr("font-size", "20px")
-  .attr("text-anchor", "middle")
-  .text("Month");
-
-// Y Label
-canvas
-  .append("text")
-  .attr("class", "y axis-label")
-  .attr("x", -(height / 2))
-  .attr("y", -60)
-  .attr("font-size", "20px")
-  .attr("text-anchor", "middle")
-  .attr("transform", "rotate(-90)")
-  .text("Revenue");
+/*
+  Core of visualization, gets data, defines & runs updating script.
+*/
 
 // get / handle JSON data :
 d3.json("../data/revenue.json").then(data => {
@@ -48,49 +22,58 @@ d3.json("../data/revenue.json").then(data => {
     profit: +profit
   }));
 
-  // create X, Y scales (band, linear)
-  // set x values
-  var x = d3
-    .scaleBand()
-    .domain(data.map(d => d.month))
-    .range([0, width])
-    .paddingInner(0.3)
-    .paddingOuter(0.3);
+  d3.interval(() => {
+    const modified = flag ? data : data.slice(1);
+    update(modified);
+    flag = !flag;
+  }, 1000);
+  update(revenue);
+});
 
-  // set y values
-  var y = d3
-    .scaleLinear()
-    .domain([0, d3.max(data, d => d.revenue)])
-    .range([height, 0]);
+/* **** D3 Update visualization **** */
+const update = revenue => {
+  const value = flag ? "revenue" : "profit";
+  // console.log("updating...");
+  x.domain(revenue.map(d => d.month));
+  y.domain([0, d3.max(revenue, d => d[value])]);
 
   var xAxisCall = d3.axisBottom(x);
-  canvas
-    .append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0, " + height + ")")
-    .call(xAxisCall)
-    .selectAll("text") // select all labels, apply attributes
-    .attr("y", "15")
-    .attr("text-anchor", "middle");
-  // .attr("transform", "rotate(-40)");
+  xAxisGroup.transition(t).call(xAxisCall);
 
-  var yAxisCall = d3
-    .axisLeft(y)
-    .ticks(revenue.length * 2)
-    .tickFormat(d => `$${d}`);
-  canvas
-    .append("g")
-    .attr("class", "y-axis")
-    .call(yAxisCall);
+  var yAxisCall = d3.axisLeft(y).tickFormat(d => `$${d}`);
+  yAxisGroup.transition(t).call(yAxisCall);
 
-  const rects = canvas
-    .selectAll("rect")
-    .data(revenue)
+  /*
+    D3 Update pattern
+  */
+
+  // JOIN new data with old elements.
+  const rects = canvas.selectAll("circle").data(revenue, ({ month }) => month);
+
+  // EXIT old elements not present in new data.
+  rects
+    .exit()
+    .attr("fill", "red")
+    .transition(t)
+    .attr("cy", y(0))
+    .attr("height", 0)
+    .remove();
+
+  // ENTER new elements present in new data.
+  rects
     .enter()
-    .append("rect")
-    .attr("x", d => x(d.month))
-    .attr("y", d => y(d.revenue))
-    .attr("width", x.bandwidth())
-    .attr("height", d => height - y(d.revenue))
-    .attr("fill", "gray");
-});
+    .append("circle")
+    .attr("fill", "grey")
+    .attr("cy", y(0))
+    .attr("cx", d => x(d.month) + x.bandwidth() / 2)
+    .attr("r", 5)
+    // AND UPDATE old elements present in new data
+    .merge(rects)
+    .transition(t)
+    .attr("cx", d => x(d.month) + x.bandwidth() / 2)
+    .attr("cy", d => y(d[value]))
+    .attr("r", 5);
+
+  const label = flag ? "Revenue" : "Profit";
+  yLabel.text(label);
+};
