@@ -1,2 +1,2 @@
 # d3-webpack-boilerplate
-A boilerplate, agnostic setup for creating quick D3 Visualizations
+A collection, of the most commonly used D3 Visualizations
