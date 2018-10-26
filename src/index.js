@@ -1,7 +1,9 @@
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
 
 // bargraph
-import "./bargraph/buildings";
+// import "./bargraph/buildings";
+
+import "./coffeeproject/coffee";
 
 // logarithmic
 // import "./logarithmic/main";

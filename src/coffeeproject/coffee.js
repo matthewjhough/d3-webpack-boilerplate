@@ -1,12 +1,17 @@
 import * as d3 from "d3";
 
-var margin = { left: 100, right: 10, top: 10, bottom: 150 };
+const margin = {
+  left: 100,
+  right: 10,
+  top: 10,
+  bottom: 150
+};
+const height = 400 - margin.top - margin.bottom;
+const width = 600 - margin.left - margin.right;
 
-var width = 600 - margin.left - margin.right,
-  height = 400 - margin.top - margin.bottom;
+// canvas setup :
 
-// create canvas for visualization
-var g = d3
+const canvas = d3
   .select("#chart-area")
   .append("svg")
   .attr("width", width + margin.left + margin.right)
@@ -14,35 +19,40 @@ var g = d3
   .append("g")
   .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 
-// Labels ...
 // X Label
-g.append("text")
+canvas
+  .append("text")
   .attr("class", "x axis-label")
   .attr("x", width / 2)
   .attr("y", height + 140)
   .attr("font-size", "20px")
   .attr("text-anchor", "middle")
-  .text("The word's tallest buildings");
+  .text("Month");
 
 // Y Label
-g.append("text")
+canvas
+  .append("text")
   .attr("class", "y axis-label")
   .attr("x", -(height / 2))
   .attr("y", -60)
   .attr("font-size", "20px")
   .attr("text-anchor", "middle")
   .attr("transform", "rotate(-90)")
-  .text("Height (m)");
+  .text("Revenue");
 
-// Viz start
-d3.json("../data/buildings.json").then(data => {
-  // convert all height strings to int
-  data.forEach(item => (item.height = +item.height));
+// get / handle JSON data :
+d3.json("../data/revenue.json").then(data => {
+  const revenue = data.map(({ month, revenue, profit }) => ({
+    month,
+    revenue: +revenue,
+    profit: +profit
+  }));
 
+  // create X, Y scales (band, linear)
   // set x values
   var x = d3
     .scaleBand()
-    .domain(data.map(d => d.name))
+    .domain(data.map(d => d.month))
     .range([0, width])
     .paddingInner(0.3)
     .paddingOuter(0.3);
@@ -50,37 +60,37 @@ d3.json("../data/buildings.json").then(data => {
   // set y values
   var y = d3
     .scaleLinear()
-    .domain([0, d3.max(data, d => d.height)])
+    .domain([0, d3.max(data, d => d.revenue)])
     .range([height, 0]);
 
   var xAxisCall = d3.axisBottom(x);
-  g.append("g")
+  canvas
+    .append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0, " + height + ")")
     .call(xAxisCall)
-    .selectAll("text") // select all labels, and transform to make them readable
-    .attr("y", "10")
-    .attr("x", "-5")
-    .attr("text-anchor", "end")
-    .attr("transform", "rotate(-40)");
+    .selectAll("text") // select all labels, apply attributes
+    .attr("y", "15")
+    .attr("text-anchor", "middle");
+  // .attr("transform", "rotate(-40)");
 
   var yAxisCall = d3
     .axisLeft(y)
-    .ticks(3)
-    .tickFormat(d => d + "m");
-  g.append("g")
+    .ticks(revenue.length * 2)
+    .tickFormat(d => `$${d}`);
+  canvas
+    .append("g")
     .attr("class", "y-axis")
     .call(yAxisCall);
 
-  // build and color rectangles
-  var rects = g
+  const rects = canvas
     .selectAll("rect")
-    .data(data)
+    .data(revenue)
     .enter()
     .append("rect")
-    .attr("x", d => x(d.name))
-    .attr("y", d => y(d.height))
+    .attr("x", d => x(d.month))
+    .attr("y", d => y(d.revenue))
     .attr("width", x.bandwidth())
-    .attr("height", d => height - y(d.height))
+    .attr("height", d => height - y(d.revenue))
     .attr("fill", "gray");
 });
