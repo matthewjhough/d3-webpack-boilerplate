@@ -24,9 +24,43 @@
     -->
 
     <!-- Coffee project -->
-    <div class="container">
+    <!-- <div class="container">
         <div class="row">
             <div id="chart-area"></div>
+        </div>
+    </div> -->
+
+    <!-- Countries project -->
+    <div class="container canvas-container">
+        <div class="row">
+            <div class="col-md-6">
+                <button id="play-button" class="btn btn-primary">Play</button>
+                <button id="reset-button" class="btn btn-danger">Reset</button>
+                <div id="slider-div">
+                    <label>Year: </label><span id="year">1800</span>
+                    <input type="range" min="1800" max="2014" value="1800" class="slider" id="single-slider">
+                </div>
+                <!-- This block can be reused as many times as needed -->
+                <!-- <section class="range-slider">
+                    <span class="rangeValues"></span>
+                    <input value="5" min="0" max="15" step="0.5" type="range">
+                    <input value="10" min="0" max="15" step="0.5" type="range">
+                </section> -->
+            </div>
+            <div class="col-md-6">
+                <select id="continent-select" class="form-control">
+                    <option selected value="all">All</option>
+                    <option value="europe">Europe</option>
+                    <option value="asia">Asia</option>
+                    <option value="americas">Americas</option>
+                    <option value="africa">Africa</option>
+                </select>
+            </div>
+        </div>
+        <div class="row chart-enter">
+            <div class="col-md-12">
+                <div id="chart-area"></div>
+            </div>
         </div>
     </div>
 </body>

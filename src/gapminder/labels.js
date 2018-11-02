@@ -1,8 +1,8 @@
 import * as d3 from "d3";
 import { height, width, canvas } from "./canvas";
-
+import { continentColor } from "./scales";
 /*
-    Update dom to show labels
+    Update dom to show labels, key of graph
 */
 // Labels
 var xLabel = canvas

@@ -1,14 +1,12 @@
 import { timeLabel } from "./labels";
 import { x, y, area, continentColor } from "./scales";
+import { tip } from "./canvas";
 
-export function render(circles, t, year) {
+export function render(circles, t, year, sliderYear, slider, time) {
   // EXIT old elements not present in new data.
   circles
     .exit()
-    .attr("fill", "red")
-    .transition(t)
-    .attr("cy", y(0))
-    .attr("height", 0)
+    .attr("class", "exit")
     .remove();
 
   // ENTER new elements present in new data.
@@ -16,6 +14,9 @@ export function render(circles, t, year) {
     .enter()
     .append("circle")
     .attr("fill", d => continentColor(d.continent))
+    // Attach events before merge, only want to attach event listeners once
+    .on("mouseover", tip.show)
+    .on("mouseout", tip.hide)
     // AND UPDATE old elements present in new data
     .merge(circles)
     .transition(t)
@@ -23,5 +24,7 @@ export function render(circles, t, year) {
     .attr("cx", d => x(d.income))
     .attr("r", d => Math.sqrt(area(d.population) / Math.PI));
 
-  timeLabel.text(+year);
+  timeLabel.text(+(time + 1800));
+  sliderYear.innerText = time + 1800;
+  slider.value = time + 1800;
 }

@@ -7,7 +7,7 @@ import "../node_modules/bootstrap/dist/css/bootstrap.css";
 // import "./coffeeproject/coffee";
 
 // bubble chart project
-import "./gapminder/countries";
+import "./gapminder/run";
 
 // logarithmic
 // import "./logarithmic/main";
