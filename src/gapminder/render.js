@@ -13,8 +13,10 @@ export function render(circles, t, year, sliderYear, slider, time) {
   circles
     .enter()
     .append("circle")
+    .attr("class", "circle-graphic")
     .attr("fill", d => continentColor(d.continent))
     // Attach events before merge, only want to attach event listeners once
+    .on("click", tip => console.log(tip))
     .on("mouseover", tip.show)
     .on("mouseout", tip.hide)
     // AND UPDATE old elements present in new data

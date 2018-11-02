@@ -25,6 +25,10 @@
     flex-flow: column;
 }
 
+.circle-graphic {
+    cursor: pointer;
+}
+
 .bold-tltp {
     font-weight: bold;
 }
@@ -53,8 +57,8 @@
     background: #d3d3d3;
     outline: none;
     opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s;
 }
 
 .slider::-webkit-slider-thumb {
@@ -63,7 +67,7 @@
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background: #4CAF50;
+    background: #4caf50;
     cursor: pointer;
 }
 
@@ -71,7 +75,7 @@
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background: #4CAF50;
+    background: #4caf50;
     cursor: pointer;
 }
 
@@ -123,6 +127,6 @@ section.range-slider input:last-of-type::-moz-range-track {
     border: 0;
 }
 
-section.range-slider input[type=range]::-moz-focus-outer {
+section.range-slider input[type="range"]::-moz-focus-outer {
     border: 0;
 }
